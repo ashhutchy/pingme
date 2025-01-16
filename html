@@ -81,3 +81,459 @@
   <script src="script.js"></script>
 </body>
 </html>
+
+/* 1. Gradient background for body */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: linear-gradient(to right, #1EB5FF, #FBFFF1);
+}
+
+/* 2. Header styling - using a blue background (#0066cc) */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #0066cc;
+  color: #fff;
+  padding: 10px 20px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure the header’s text (PingMe) is spaced from the logout button */
+header h2 {
+  flex: 1; /* pushes the logout button to the right */
+}
+
+header button {
+  background-color: #005bb5;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 14px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* 3. Auth container (sign up / log in) */
+#auth-container {
+  max-width: 350px;
+  margin: 80px auto; /* center it with top margin */
+  text-align: center;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+#auth-container:hover {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+#auth-container h1 {
+  margin-bottom: 20px;
+  color: #0066cc;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+#auth-container h3 {
+  margin: 15px 0 10px;
+  color: #333;
+}
+
+/* Inputs and buttons in auth container */
+#auth-container input[type="email"],
+#auth-container input[type="password"] {
+  display: block;
+  margin: 8px auto;
+  padding: 10px;
+  width: 80%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#auth-container button {
+  background-color: #0066cc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+#auth-container button:hover {
+  background-color: #005bb5; /* Slight color change on hover */
+}
+
+/* 4. Main app layout */
+#app-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+#left-column {
+  width: 25%;
+  background: #fff;
+  margin-top: 60px; /* account for fixed header */
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  height: calc(100vh - 60px);
+}
+
+#chat-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 60px; /* account for fixed header */
+  padding: 20px;
+  box-sizing: border-box;
+  height: calc(100vh - 60px);
+}
+
+/* Profile styling */
+#profile-section {
+  margin-bottom: 20px;
+}
+
+#profile-section input,
+#profile-section textarea {
+  display: block;
+  margin: 5px 0;
+  padding: 8px;
+  width: 90%;
+  box-sizing: border-box;
+}
+
+#profile-section button {
+  background-color: #0066cc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+#profile-section button:hover {
+  background-color: #005bb5;
+}
+
+/* Chat window styling */
+#chat-window {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  margin-bottom: 10px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+#chat-window .message {
+  margin: 5px 0;
+}
+
+#chat-window .message .sender {
+  font-weight: bold;
+  margin-right: 5px;
+  color: #0066cc;
+}
+
+#message-input {
+  width: 80%;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-right: 5px;
+}
+
+#send-message-btn {
+  padding: 10px 20px;
+  background-color: #0066cc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#send-message-btn:hover {
+  background-color: #005bb5;
+}
+
+/****************************************/
+/* 1. DOM Elements                      */
+/****************************************/
+const authContainer = document.getElementById('auth-container');
+const appContainer = document.getElementById('app-container');
+
+// Sign Up
+const signupEmail = document.getElementById('signup-email');
+const signupPassword = document.getElementById('signup-password');
+const signupBtn = document.getElementById('signup-btn');
+
+// Log In
+const loginEmail = document.getElementById('login-email');
+const loginPassword = document.getElementById('login-password');
+const loginBtn = document.getElementById('login-btn');
+
+// Logout
+const logoutBtn = document.getElementById('logout-btn');
+
+// Logo link in header
+const logoHomeLink = document.getElementById('logo-home-link');
+
+// Profile
+const profileUsername = document.getElementById('profile-username');
+const profileBio = document.getElementById('profile-bio');
+const updateProfileBtn = document.getElementById('update-profile-btn');
+const profileInfo = document.getElementById('profile-info');
+
+// Chat
+const chatWindow = document.getElementById('chat-window');
+const messageInput = document.getElementById('message-input');
+const sendMessageBtn = document.getElementById('send-message-btn');
+
+/****************************************/
+/* 2. Local Storage Helpers             */
+/****************************************/
+function getUsers() {
+  const usersJSON = localStorage.getItem('pingmeUsers');
+  return usersJSON ? JSON.parse(usersJSON) : [];
+}
+
+function setUsers(usersArray) {
+  localStorage.setItem('pingmeUsers', JSON.stringify(usersArray));
+}
+
+function getLoggedInUser() {
+  return localStorage.getItem('pingmeLoggedInUser'); 
+}
+
+function setLoggedInUser(email) {
+  if (email) {
+    localStorage.setItem('pingmeLoggedInUser', email);
+  } else {
+    localStorage.removeItem('pingmeLoggedInUser');
+  }
+}
+
+function getMessages() {
+  const messagesJSON = localStorage.getItem('pingmeMessages');
+  return messagesJSON ? JSON.parse(messagesJSON) : [];
+}
+
+function setMessages(messagesArray) {
+  localStorage.setItem('pingmeMessages', JSON.stringify(messagesArray));
+}
+
+/****************************************/
+/* 3. Check Auth State on Load          */
+/****************************************/
+window.addEventListener('load', () => {
+  const userEmail = getLoggedInUser();
+  if (userEmail) {
+    // If user is already logged in
+    authContainer.style.display = 'none';
+    appContainer.style.display = 'flex';
+    loadUserProfile(userEmail);
+    renderMessages();
+  } else {
+    // Not logged in
+    authContainer.style.display = 'block';
+    appContainer.style.display = 'none';
+  }
+});
+
+/****************************************/
+/* 4. Sign Up                           */
+/****************************************/
+signupBtn.addEventListener('click', () => {
+  const email = signupEmail.value.trim();
+  const password = signupPassword.value.trim();
+
+  if (!email || !password) {
+    alert("Please enter email and password.");
+    return;
+  }
+
+  // Check if email already exists
+  const users = getUsers();
+  const existingUser = users.find(u => u.email === email);
+  if (existingUser) {
+    alert("This email is already registered. Please log in.");
+    return;
+  }
+
+  // Create new user object (with bio empty by default)
+  const newUser = {
+    email,
+    password,
+    username: "",
+    bio: ""
+  };
+
+  // Save to localStorage
+  users.push(newUser);
+  setUsers(users);
+
+  // Log them in
+  setLoggedInUser(email);
+  alert("Sign up successful. You are now logged in.");
+
+  // Switch to main app
+  authContainer.style.display = 'none';
+  appContainer.style.display = 'flex';
+  loadUserProfile(email);
+  renderMessages();
+});
+
+/****************************************/
+/* 5. Log In                            */
+/****************************************/
+loginBtn.addEventListener('click', () => {
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value.trim();
+
+  if (!email || !password) {
+    alert("Please enter email and password.");
+    return;
+  }
+
+  const users = getUsers();
+  const user = users.find(u => u.email === email && u.password === password);
+
+  if (!user) {
+    alert("Invalid email or password.");
+    return;
+  }
+
+  // Set logged in
+  setLoggedInUser(email);
+  alert("You are now logged in.");
+
+  // Switch to main app
+  authContainer.style.display = 'none';
+  appContainer.style.display = 'flex';
+  loadUserProfile(email);
+  renderMessages();
+});
+
+/****************************************/
+/* 6. Logout                            */
+/****************************************/
+logoutBtn.addEventListener('click', () => {
+  setLoggedInUser(null);
+  chatWindow.innerHTML = '';
+
+  authContainer.style.display = 'block';
+  appContainer.style.display = 'none';
+
+  alert("Logged out successfully.");
+});
+
+/****************************************/
+/* 7. Profile Management                */
+/****************************************/
+function loadUserProfile(email) {
+  const users = getUsers();
+  const user = users.find(u => u.email === email);
+  if (user) {
+    profileUsername.value = user.username;
+    profileBio.value = user.bio || "";
+    profileInfo.innerText = `Email: ${user.email}`;
+  }
+}
+
+updateProfileBtn.addEventListener('click', () => {
+  const currentEmail = getLoggedInUser();
+  if (!currentEmail) return;
+
+  const newUsername = profileUsername.value.trim();
+  const newBio = profileBio.value.trim();
+
+  const users = getUsers();
+  const userIndex = users.findIndex(u => u.email === currentEmail);
+  if (userIndex > -1) {
+    users[userIndex].username = newUsername;
+    users[userIndex].bio = newBio;
+    setUsers(users);
+    alert("Profile updated!");
+    loadUserProfile(currentEmail);
+  }
+});
+
+/****************************************/
+/* 8. Local Chat                        */
+/****************************************/
+function renderMessages() {
+  chatWindow.innerHTML = '';
+  const messages = getMessages();
+  messages.forEach(msg => {
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message');
+
+    const senderSpan = document.createElement('span');
+    senderSpan.classList.add('sender');
+    senderSpan.innerText = msg.sender + ": ";
+
+    const textSpan = document.createElement('span');
+    textSpan.innerText = msg.text;
+
+    msgDiv.appendChild(senderSpan);
+    msgDiv.appendChild(textSpan);
+    chatWindow.appendChild(msgDiv);
+  });
+  // scroll to bottom
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+sendMessageBtn.addEventListener('click', () => {
+  const currentEmail = getLoggedInUser();
+  if (!currentEmail) {
+    alert("You must be logged in to send messages.");
+    return;
+  }
+
+  const messageText = messageInput.value.trim();
+  if (!messageText) return;
+
+  // Find user info for a nicer "sender" display
+  const users = getUsers();
+  const user = users.find(u => u.email === currentEmail);
+
+  const displayName = user.username ? user.username : user.email;
+  const newMsg = {
+    sender: displayName,
+    text: messageText,
+    timestamp: Date.now()
+  };
+
+  const messages = getMessages();
+  messages.push(newMsg);
+  setMessages(messages);
+
+  renderMessages();
+  messageInput.value = '';
+});
+
+/****************************************/
+/* 9. Clickable Logo -> Go To Profile   */
+/****************************************/
+logoHomeLink.addEventListener('click', (e) => {
+  e.preventDefault(); // Stop any default link action
+  // Scroll smoothly to the left-column (profile section)
+  document.getElementById('left-column').scrollIntoView({ behavior: 'smooth' });
+});
+
