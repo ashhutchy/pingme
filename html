@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PingMe - Local Demo</title>
+</head>
+<body>
+
+  <!-- Authentication Container -->
+  <div id="auth-container">
+    <!-- Logo on the login/signup screen -->
+    <img 
+      src="https://example.com/pingme_logo.png" 
+      alt="PingMe Logo" 
+      style="max-width: 150px; margin-bottom: 15px;"
+    />
+
+    <h1>Welcome to PingMe</h1>
+    
+    <!-- Sign Up Form -->
+    <div id="signup-form">
+      <h3>Sign Up</h3>
+      <input type="email" id="signup-email" placeholder="Email" />
+      <input type="password" id="signup-password" placeholder="Password" />
+      <button id="signup-btn">Sign Up</button>
+    </div>
+    
+    <!-- Login Form -->
+    <div id="login-form">
+      <h3>Log In</h3>
+      <input type="email" id="login-email" placeholder="Email" />
+      <input type="password" id="login-password" placeholder="Password" />
+      <button id="login-btn">Log In</button>
+    </div>
+  </div>
+
+  <!-- Main App Container (hidden until logged in) -->
+  <div id="app-container" style="display:none;">
+    <!-- Header with clickable logo -->
+    <header>
+      <!-- Clickable logo that takes you to your profile section -->
+      <a href="#" id="logo-home-link">
+        <img 
+          src="https://example.com/pingme_logo.png" 
+          alt="PingMe Logo" 
+          style="height: 40px; margin-right: 10px;"
+        />
+      </a>
+      <h2>PingMe (Local Demo)</h2>
+      <button id="logout-btn">Logout</button>
+    </header>
+    
+    <!-- Left column: Profile -->
+    <div id="left-column">
+      <div id="profile-section">
+        <h3>Your Profile</h3>
+        <div>
+          <label>Username:</label>
+          <input type="text" id="profile-username" />
+        </div>
+        <div>
+          <label>Bio:</label>
+          <textarea id="profile-bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+        </div>
+        <button id="update-profile-btn">Update Profile</button>
+        <p id="profile-info"></p>
+      </div>
+    </div>
+
+    <!-- Right column: Chat Section -->
+    <div id="chat-section">
+      <h3>Chat</h3>
+      <!-- Chat messages -->
+      <div id="chat-window"></div>
+      <input type="text" id="message-input" placeholder="Type your message..." />
+      <button id="send-message-btn">Send</button>
+    </div>
+  </div>
+
+  <!-- Link to your JavaScript file or place your JS directly here -->
+  <script src="script.js"></script>
+</body>
+</html>
